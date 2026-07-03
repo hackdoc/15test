@@ -57,20 +57,3 @@ jobs:
         name: kexts-${{ env.SHORT_SHA }}
         path: ${{ env.BUILD_OUTPUT }}/*.zip
         retention-days: 30
-
-    - name: Generate Release Notes
-      run: |
-        echo '### Recent commits' > ReleaseNotes.md
-        git log -10 --format="- %h %s" | sed '/^$/d' >> ReleaseNotes.md
-
-    - name: Publish GitHub Release
-      if: contains(github.event.head_commit.message, 'Bump version') == false
-      uses: ncipollo/release-action@v1
-      with:
-        prerelease: false
-        allowUpdates: true
-        removeArtifacts: true
-        bodyFile: ReleaseNotes.md
-        artifacts: "${{ env.BUILD_OUTPUT }}/*.zip"
-        tag: "v${{ env.ITLWM_VER }}"
-        token: ${{ secrets.GITHUB_TOKEN }}
